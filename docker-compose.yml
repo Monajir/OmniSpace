@@ -1,0 +1,76 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: omnispace-postgres
+    environment:
+      POSTGRES_DB: ${DB_NAME:-omnispace}
+      POSTGRES_USER: ${DB_USER:-omnispace}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-omnispace}
+    ports:
+      - "${POSTGRES_HOST_PORT:-5433}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-omnispace} -d ${DB_NAME:-omnispace}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    container_name: omnispace-redis
+    ports:
+      - "${REDIS_HOST_PORT:-6379}:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build:
+      context: ./backend
+    container_name: omnispace-backend
+    ports:
+      - "${BACKEND_HOST_PORT:-8081}:8081"
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME:-omnispace}
+      DB_USER: ${DB_USER:-omnispace}
+      DB_PASSWORD: ${DB_PASSWORD:-omnispace}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      JWT_SECRET: ${JWT_SECRET:-change-this-super-secret-key-in-production-min-256-bits-long}
+      REFRESH_COOKIE_SECURE: ${REFRESH_COOKIE_SECURE:-false}
+      REFRESH_COOKIE_SAME_SITE: ${REFRESH_COOKIE_SAME_SITE:-Lax}
+      REFRESH_CONCURRENCY_WINDOW_SECONDS: ${REFRESH_CONCURRENCY_WINDOW_SECONDS:-5}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:3000,http://localhost:8081}
+      CURRENT_ACADEMIC_YEAR: ${CURRENT_ACADEMIC_YEAR:-2025-2026}
+      CURRENT_SEMESTER: ${CURRENT_SEMESTER:-Fall}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O - http://localhost:8081/actuator/health | grep -q '\"status\":\"UP\"'"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 15s
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:8081}
+    container_name: omnispace-frontend
+    ports:
+      - "${FRONTEND_HOST_PORT:-3000}:3000"
+    depends_on:
+      backend:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
