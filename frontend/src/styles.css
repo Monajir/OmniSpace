@@ -1,0 +1,165 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * OmniSpace design system — dark, calendar-first scheduling UI.
+ * All colors are oklch semantic tokens. Never hardcode colors in components.
+ */
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+
+  --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Schedule semantics */
+  --color-routine: var(--routine);
+  --color-routine-foreground: var(--routine-foreground);
+  --color-booked: var(--booked);
+  --color-booked-foreground: var(--booked-foreground);
+  --color-pending: var(--pending);
+  --color-pending-foreground: var(--pending-foreground);
+  --color-rejected: var(--rejected);
+  --color-cancelled: var(--cancelled);
+  --color-exam: var(--exam);
+  --color-event: var(--event);
+  --color-lunch: var(--lunch);
+  --color-lunch-foreground: var(--lunch-foreground);
+  --color-available: var(--available);
+}
+
+:root {
+  --radius: 0.75rem;
+
+  --background: oklch(0.17 0.024 268);
+  --foreground: oklch(0.95 0.008 268);
+  --card: oklch(0.216 0.026 268);
+  --card-foreground: oklch(0.95 0.008 268);
+  --popover: oklch(0.235 0.028 268);
+  --popover-foreground: oklch(0.95 0.008 268);
+  --primary: oklch(0.63 0.19 279);
+  --primary-foreground: oklch(0.98 0.005 279);
+  --secondary: oklch(0.27 0.028 268);
+  --secondary-foreground: oklch(0.93 0.008 268);
+  --muted: oklch(0.26 0.026 268);
+  --muted-foreground: oklch(0.68 0.022 268);
+  --accent: oklch(0.3 0.04 275);
+  --accent-foreground: oklch(0.96 0.008 268);
+  --destructive: oklch(0.6 0.21 25);
+  --destructive-foreground: oklch(0.98 0.005 25);
+  --border: oklch(0.3 0.028 268);
+  --input: oklch(0.32 0.03 268);
+  --ring: oklch(0.63 0.19 279);
+
+  --sidebar: oklch(0.195 0.026 268);
+  --sidebar-foreground: oklch(0.92 0.01 268);
+  --sidebar-primary: oklch(0.63 0.19 279);
+  --sidebar-primary-foreground: oklch(0.98 0.005 279);
+  --sidebar-accent: oklch(0.27 0.03 270);
+  --sidebar-accent-foreground: oklch(0.96 0.008 268);
+  --sidebar-border: oklch(0.28 0.026 268);
+  --sidebar-ring: oklch(0.63 0.19 279);
+
+  --routine: oklch(0.72 0.15 160);
+  --routine-foreground: oklch(0.18 0.03 160);
+  --booked: oklch(0.68 0.15 240);
+  --booked-foreground: oklch(0.16 0.03 240);
+  --pending: oklch(0.83 0.16 85);
+  --pending-foreground: oklch(0.22 0.04 85);
+  --rejected: oklch(0.64 0.21 25);
+  --cancelled: oklch(0.62 0.015 268);
+  --exam: oklch(0.68 0.2 355);
+  --event: oklch(0.65 0.19 305);
+  --lunch: oklch(0.24 0.02 268);
+  --lunch-foreground: oklch(0.6 0.02 268);
+  --available: oklch(0.24 0.03 268);
+
+  --gradient-surface: linear-gradient(
+    160deg,
+    color-mix(in oklab, var(--primary) 12%, var(--card)),
+    var(--card) 55%
+  );
+  --shadow-panel: 0 24px 60px -30px oklch(0.05 0.05 268 / 0.9);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    background-image: radial-gradient(
+        1200px 600px at 15% -10%,
+        color-mix(in oklab, var(--primary) 18%, transparent),
+        transparent 60%
+      ),
+      radial-gradient(
+        900px 500px at 100% 0%,
+        color-mix(in oklab, var(--event) 10%, transparent),
+        transparent 60%
+      );
+    background-attachment: fixed;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
+  }
+}
+
+@utility panel {
+  background: var(--gradient-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-panel);
+}
+
+@utility label-mono {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-muted-foreground);
+}
